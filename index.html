@@ -1,11 +1,804 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>Coming soon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ANTMINI｜一整台 Mac mini，只属于你</title>
+<meta name="description" content="Mac mini 整机月租。真机独享，不是虚拟机。机房在东南亚，微信、支付宝付款，中文客服。$149.9／月。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="ANTMINI｜一整台 Mac mini，只属于你">
+<meta property="og:description" content="Mac mini 整机月租。机房在东南亚，$149.9／月。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Crect x='5.5' y='5.5' width='21' height='21' fill='none' stroke='%23fff' stroke-opacity='.5'/%3E%3Cpath d='M9 21c3-7 6 2 8-4s4-5 6-6' fill='none' stroke='%23b3fe32' stroke-width='1.6'/%3E%3Ccircle cx='23' cy='11' r='2' fill='%23b3fe32'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Geist";src:url("fonts/geist.woff2") format("woff2");font-weight:100 900;font-display:swap}
+
+:root{
+  --black:#000;
+  --white:#fff;
+  --lime:#b3fe32;
+  --grey:#a3a3a3;
+  --mute:#6b6b6b;
+  --rule:rgba(255,255,255,.16);
+  --gap:14px;
+  --nav:64px;
+  --pad:clamp(20px,4.4vw,64px);
+  --sans:"Geist","PingFang SC","HarmonyOS Sans SC","MiSans","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--black);color:var(--white);scroll-behavior:smooth;scrollbar-color:#333 #000;-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;padding:var(--gap);overflow-x:clip}
+::selection{background:var(--lime);color:#000}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+/* ── 框：整站都在这个框里，蚂蚁也是 ── */
+.frame{position:fixed;inset:var(--gap);border:1px solid rgba(255,255,255,.28);box-shadow:0 0 0 60px #000;pointer-events:none;z-index:60}
+.frame i{position:absolute;width:13px;height:13px;border:2px solid var(--lime)}
+.frame i:nth-child(1){left:-2px;top:-2px;border-right:0;border-bottom:0}
+.frame i:nth-child(2){right:-2px;top:-2px;border-left:0;border-bottom:0}
+.frame i:nth-child(3){left:-2px;bottom:-2px;border-right:0;border-top:0}
+.frame i:nth-child(4){right:-2px;bottom:-2px;border-left:0;border-top:0}
+.frame b{position:absolute;left:0;top:-1px;height:1px;width:100%;background:var(--lime);transform-origin:0 50%;transform:scaleX(0)}
+canvas.layer{position:fixed;left:0;top:0;pointer-events:none}
+#trail{z-index:0;opacity:.8}
+#antc{z-index:50}
+
+/* ── 导航 ── */
+.nav{position:fixed;left:var(--gap);right:var(--gap);top:var(--gap);height:var(--nav);z-index:55;display:flex;align-items:center;gap:28px;padding:0 var(--pad);background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.stuck{border-bottom-color:var(--rule)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.01em}
+.brand svg{width:22px;height:22px;display:block}
+.nav-links{display:flex;gap:26px;margin-left:18px;font-size:15px;color:var(--grey)}
+.nav-links a:hover{color:var(--white)}
+.nav-end{margin-left:auto;display:flex;align-items:center;gap:14px}
+.lang{display:flex;border:1px solid var(--rule);border-radius:999px;padding:3px;font-size:13px;font-weight:600}
+.lang button{padding:4px 11px;border-radius:999px;color:var(--grey);line-height:1.5}
+.lang button[aria-pressed="true"]{background:var(--white);color:#000}
+.pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-weight:650;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.pill.s{height:38px;padding:0 18px;font-size:14px}
+.pill.l{height:58px;padding:0 32px;font-size:17px}
+.pill.w{background:var(--white);color:#000}
+.pill.w:hover{background:var(--lime)}
+.pill.o{border:1px solid rgba(255,255,255,.45)}
+.pill.o:hover{border-color:var(--white);background:rgba(255,255,255,.08)}
+.pill.g{background:var(--lime);color:#000}
+.pill.g:hover{background:var(--white)}
+
+main,footer{position:relative;z-index:1}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--pad)}
+section{padding:clamp(60px,7.4vw,108px) 0;scroll-margin-top:calc(var(--nav) + var(--gap))}
+h1,h2,h3{font-weight:800;letter-spacing:-.035em;line-height:1.04;text-wrap:balance}
+:lang(zh-CN) h1,:lang(zh-CN) h2,:lang(zh-CN) h3{letter-spacing:-.01em;line-height:1.16}
+h2{font-size:clamp(34px,5.6vw,76px);margin-bottom:clamp(30px,4vw,56px)}
+.lede{color:var(--grey);font-size:clamp(17px,1.5vw,20px);max-width:34em}
+.tbd{color:var(--mute)}
+
+/* ── 首屏 ── */
+.hero{min-height:calc(100svh - var(--gap)*2);padding:calc(var(--nav) + clamp(30px,4vw,56px)) 0 0;display:flex;flex-direction:column}
+.hero>.wrap{width:100%}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,80px);align-items:start;flex:1;margin-top:clamp(28px,3.6vw,52px)}
+h1{font-size:clamp(34px,8.6vw,114px)}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.08em}
+h1 .ln>span{display:block}
+.js h1 .ln>span{transform:translateY(108%);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
+.js h1 .ln:nth-child(2)>span{animation-delay:.09s}
+@keyframes rise{to{transform:none}}
+.hero .lede{margin-top:0}
+.buy{margin-top:clamp(28px,3.4vw,46px);display:flex;flex-wrap:wrap;align-items:center;gap:14px 30px}
+.amount{font-size:clamp(34px,3.6vw,52px);font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.amount small{font-size:.4em;font-weight:500;letter-spacing:0;color:var(--grey);margin-left:.4em}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.facts{margin-top:clamp(26px,3vw,40px);display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none;font-size:14px}
+.facts li{border:1px solid var(--rule);padding:6px 12px;color:var(--grey);background:rgba(0,0,0,.6)}
+
+.term-rig{perspective:1400px}
+.term{background:#000;border:1px solid rgba(255,255,255,.3);box-shadow:0 50px 140px -30px rgba(179,254,50,.22);transition:transform .25s ease-out;transform-style:preserve-3d;will-change:transform}
+.term-bar{display:flex;align-items:center;gap:7px;height:38px;padding:0 14px;border-bottom:1px solid var(--rule);font:12px/1 var(--mono);color:var(--mute)}
+.term-bar i{width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.4)}
+.term-bar span{margin-left:auto}
+.term-body{font:13.5px/1.7 var(--mono);padding:16px 18px 18px;min-height:244px;white-space:pre-wrap;word-break:break-all}
+.term-body .c::before{content:"% ";color:var(--lime)}
+.term-body .o{color:var(--grey)}
+.term-body .ok{color:var(--lime)}
+.term-body .n{color:var(--mute)}
+.cur{display:inline-block;width:.6em;height:1.1em;background:var(--lime);vertical-align:-.2em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.term-cap{margin-top:10px;font-size:12.5px;color:var(--mute);text-align:right}
+
+.fig{margin-top:clamp(28px,3.6vw,48px);padding:16px 0;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:6px 28px;justify-content:space-between;font-size:14px;color:var(--grey)}
+.fig output{font-family:var(--mono);font-size:13px;color:var(--lime);font-variant-numeric:tabular-nums}
+
+/* ── 为什么：大字行 ── */
+.rows{border-top:1px solid var(--rule)}
+.rows>div{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:12px 48px;padding:clamp(22px,2.8vw,38px) 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.rows h3{font-size:clamp(22px,2.7vw,36px);font-weight:700}
+.rows p{color:var(--grey)}
+
+/* ── 位置：距离条 ── */
+.routes{display:grid;gap:38px;margin-top:clamp(40px,5vw,64px)}
+.route .ends{display:flex;justify-content:space-between;gap:24px;white-space:nowrap;font-size:15px;color:var(--grey);margin-bottom:12px}
+.route.near{width:30%}
+.route.near .ends span:last-child{color:var(--white);font-weight:650}
+.route .line{position:relative;height:1px;background:rgba(255,255,255,.3)}
+.route .line::before,.route .line::after{content:"";position:absolute;top:-4px;width:9px;height:9px;background:var(--black);border:1px solid rgba(255,255,255,.6)}
+.route .line::before{left:0}.route .line::after{right:0}
+.route.near .line{background:var(--lime)}
+.route.near .line::before,.route.near .line::after{border-color:var(--lime)}
+.route.near .line::after{background:var(--lime)}
+.route .dot{position:absolute;top:-2px;left:0;width:5px;height:5px;background:var(--white);border-radius:50%;animation:hop 5.4s linear infinite}
+.route.near .dot{background:var(--lime);animation-duration:1.62s}
+@keyframes hop{0%{left:0;opacity:0}6%{opacity:1}94%{opacity:1}100%{left:100%;opacity:0}}
+.note{margin-top:22px;font-size:13.5px;color:var(--mute)}
+
+/* ── 对比表 ── */
+.scroll{overflow-x:auto;margin:0 calc(var(--pad)*-1);padding:0 var(--pad)}
+table{width:100%;min-width:680px;border-collapse:collapse;background:rgba(0,0,0,.78);font-size:16px}
+th,td{text-align:left;padding:18px 20px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-size:15px;font-weight:600;color:var(--grey);border-bottom-color:rgba(255,255,255,.4)}
+tbody th{font-weight:500;color:var(--grey);width:22%}
+td{color:var(--grey)}
+.us{color:var(--white);font-weight:600;border-left:1px solid var(--lime);border-right:1px solid var(--lime)}
+thead .us{color:#000;background:var(--lime);font-weight:800;font-size:16px;border-bottom-color:var(--lime)}
+tbody tr:last-child .us{border-bottom:1px solid var(--lime)}
+.yes{color:var(--lime)}
+
+/* ── 配置 ── */
+.spec{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,6vw,96px);align-items:center}
+.rig{height:clamp(300px,34vw,440px);display:grid;place-items:center;perspective:1300px;overflow:hidden}
+.tilt{transform:rotateX(58deg) rotateZ(-38deg);transform-style:preserve-3d}
+.slab{position:relative;width:clamp(170px,19vw,250px);aspect-ratio:1;transform-style:preserve-3d;animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateZ(18px)}}
+.slab i{position:absolute;inset:0;border-radius:21%;border:1px solid rgba(255,255,255,.3);transform:translateZ(calc(var(--i)*4.5px))}
+.slab i.lid{background:#000;border-color:rgba(255,255,255,.85)}
+.slab i.lid::after{content:"";position:absolute;left:14%;bottom:12%;width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 14px 3px rgba(179,254,50,.7);animation:blink 2.4s steps(1) infinite}
+.slab u{position:absolute;inset:-34%;border-radius:50%;border:1px solid var(--lime);opacity:0;transform:translateZ(-30px) scale(.5);animation:ping 4.2s ease-out infinite}
+.slab u:nth-of-type(2){animation-delay:2.1s}
+@keyframes ping{0%{opacity:.7;transform:translateZ(-30px) scale(.5)}100%{opacity:0;transform:translateZ(-30px) scale(1.25)}}
+dl{border-top:1px solid var(--rule);background:rgba(0,0,0,.78)}
+dl div{display:grid;grid-template-columns:7.5em 1fr;gap:16px;padding:15px 0;border-bottom:1px solid var(--rule)}
+dt{color:var(--grey)}
+dd{font-weight:550}
+
+/* ── 场景：共用边线的四格 ── */
+.cells{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule);background:rgba(0,0,0,.78)}
+.cells>div{padding:clamp(24px,3.2vw,44px);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-height:clamp(180px,17vw,240px);display:flex;flex-direction:column;justify-content:space-between;gap:28px}
+.cells h3{font-size:clamp(22px,2.5vw,34px);font-weight:700}
+.cells p{color:var(--grey);max-width:30em}
+
+/* ── 价格 ── */
+.plan{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--lime);background:#000}
+.plan>div{padding:clamp(28px,4.4vw,64px)}
+.plan>div+div{border-left:1px solid var(--rule)}
+.plan h3{font-size:20px;font-weight:650;letter-spacing:0;color:var(--grey)}
+.big{font-size:clamp(72px,11.5vw,168px);font-weight:800;letter-spacing:-.055em;line-height:.95;margin:.14em 0 .1em;font-variant-numeric:tabular-nums}
+.big sup{font-size:.36em;vertical-align:.95em;letter-spacing:0;margin-right:.06em;font-weight:700}
+.per{color:var(--grey);margin-bottom:36px}
+.plan ul{list-style:none;padding:0;display:grid;gap:14px}
+.plan li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:baseline}
+.plan li::before{content:"";width:9px;height:9px;background:var(--lime);transform:translateY(-1px)}
+.plan .note{margin-top:28px}
+
+/* ── 流程：真的是先后顺序，所以编号 ── */
+.steps{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(18px,2.6vw,40px);position:relative;counter-reset:s}
+.steps::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.3)}
+.steps::after{content:"";position:absolute;top:-3px;left:0;width:7px;height:7px;border-radius:50%;background:var(--lime);animation:hop 9s linear infinite}
+.steps li{padding-top:26px;counter-increment:s}
+.steps li::before{content:counter(s);display:block;font-size:clamp(54px,6.6vw,96px);font-weight:800;letter-spacing:-.05em;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.75);margin-bottom:20px}
+.steps h3{font-size:clamp(20px,2vw,26px);font-weight:700;margin-bottom:8px}
+.steps p{color:var(--grey);font-size:16px}
+
+/* ── 问答 ── */
+.faq{border-top:1px solid var(--rule);max-width:980px;background:rgba(0,0,0,.78)}
+.qa{border-bottom:1px solid var(--rule)}
+.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:24px;text-align:left;padding:24px 0;font-size:clamp(18px,1.9vw,23px);font-weight:650;letter-spacing:-.01em}
+.qa button::after{content:"";flex:none;width:15px;height:15px;background:linear-gradient(var(--white),var(--white)) 50%/100% 1.5px no-repeat,linear-gradient(var(--white),var(--white)) 50%/1.5px 100% no-repeat;transition:transform .3s}
+.qa button[aria-expanded="true"]::after{transform:rotate(45deg)}
+.qa button:hover{color:var(--lime)}
+.ans{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s ease}
+.ans>div{overflow:hidden}
+.ans p{color:var(--grey);padding:0 48px 26px 0;max-width:44em}
+.qa.open .ans{grid-template-rows:1fr}
+html:not(.js) .ans{grid-template-rows:1fr}
+
+/* ── 联系 ── */
+.contact h2{font-size:clamp(46px,9vw,140px);margin-bottom:.26em}
+.wx{margin-top:clamp(32px,4vw,52px);display:inline-flex;flex-wrap:wrap;align-items:center;gap:14px 26px;border:1px solid rgba(255,255,255,.4);background:#000;padding:16px 16px 16px 26px}
+.wx span{color:var(--grey);font-size:15px}
+.wx strong{font-size:clamp(26px,3.6vw,44px);font-weight:800;letter-spacing:.02em;color:var(--lime);font-variant-numeric:tabular-nums;user-select:all}
+
+footer{border-top:1px solid var(--rule);padding:36px 0 46px;color:var(--mute);font-size:13.5px;background:#000}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px 40px}
+footer p{max-width:52em}
+
+@media (max-width:980px){
+  .nav-links{display:none}
+  .hero-grid,.spec{grid-template-columns:minmax(0,1fr)}
+  .plan{grid-template-columns:minmax(0,1fr)}
+  .plan>div+div{border-left:0;border-top:1px solid var(--rule)}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:44px}
+  .steps::after{display:none}
+}
+@media (max-width:640px){
+  :root{--gap:8px;--nav:56px}
+  body{font-size:16px}
+  .nav{gap:10px}
+  .brand{font-size:17px}
+  .pill.l{height:54px;padding:0 22px;flex:1}
+  .cta{width:100%}
+  table{min-width:600px;font-size:15px}
+  th,td{padding:14px 14px}
+  tbody th{width:auto;white-space:nowrap}
+  .rows>div{grid-template-columns:minmax(0,1fr)}
+  .cells{grid-template-columns:minmax(0,1fr)}
+  .cells>div{min-height:0}
+  .route.near{width:46%}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  dl div{grid-template-columns:5.5em 1fr}
+  .term-body{font-size:12px;padding:14px;min-height:240px}
+  .ans p{padding-right:8px}
+  .wx{display:flex}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js h1 .ln>span{transform:none}
+  .steps::after,.route .dot,.slab u{display:none}
+}
+</style>
 </head>
 <body>
-<h1>Coming soon</h1>
-<p>即將上線</p>
+<script>document.documentElement.classList.add('js')</script>
+
+<canvas id="trail" class="layer" aria-hidden="true"></canvas>
+<canvas id="antc" class="layer" aria-hidden="true"></canvas>
+<div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i><b id="prog"></b></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="ANTMINI">
+    <svg viewBox="0 0 22 22" aria-hidden="true"><rect x=".75" y=".75" width="20.5" height="20.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/><path d="M4.5 15.5c2.2-5.4 4.6 1.4 6.2-3.2s3-3.8 4.6-4.6" fill="none" stroke="#b3fe32" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="7.2" r="1.7" fill="#b3fe32"/></svg>
+    <span class="bn">ANTMINI</span>
+  </a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="#spec" data-i="nav.spec">配置</a>
+    <a href="#compare" data-i="nav.compare">对比</a>
+    <a href="#price" data-i="nav.price">价格</a>
+    <a href="#flow" data-i="nav.flow">流程</a>
+    <a href="#faq" data-i="nav.faq">常见问题</a>
+  </nav>
+  <div class="nav-end">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="zh" aria-pressed="true">中</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <a class="pill s w" href="#contact" data-i="nav.cta">联系租用</a>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero" style="padding-bottom:0">
+  <div class="wrap">
+    <h1 id="h1" data-i="hero.h">一整台 Mac mini，<br>只属于你。</h1>
+  </div>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="lede" data-i="hero.sub">真机整机出租，不是虚拟机，不和任何人共用。机房在东南亚，远程桌面连上就能用。</p>
+      <div class="buy">
+        <p class="amount">$149.9<small data-i="per">／月</small></p>
+        <div class="cta">
+          <a class="pill l w" href="#contact" data-i="hero.cta1">立即租用</a>
+          <a class="pill l o" href="#spec" data-i="hero.cta2">查看配置</a>
+        </div>
+      </div>
+      <ul class="facts">
+        <li data-i="hero.f1">微信、支付宝付款</li>
+        <li data-i="hero.f2">中文客服</li>
+        <li data-i="hero.f3">整机独享</li>
+      </ul>
+    </div>
+    <div class="term-rig" id="rig">
+      <div class="term" id="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>you@mac-mini — zsh</span></div>
+        <div class="term-body" id="tb" aria-hidden="true"></div>
+      </div>
+      <p class="term-cap" data-i="hero.cap">界面示意</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="fig">
+      <span data-i="hero.fig">框里只有一只蚂蚁，机器上只有你。点一下空白处，给它一粒糖。</span>
+      <output id="hud" aria-hidden="true"></output>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <h2 data-i="why.h">需要 Mac，<br>不一定要买 Mac。</h2>
+    <div class="rows">
+      <div><h3 data-i="why.1t">做苹果应用，绕不开 Mac</h3><p data-i="why.1d">iPhone 和 Mac 应用的编译、打包、上架，都必须在 macOS 上完成。</p></div>
+      <div><h3 data-i="why.2t">买一台，只用几个月</h3><p data-i="why.2d">项目只做一阵子，花几千块买一台，做完就放着吃灰。</p></div>
+      <div><h3 data-i="why.3t">海外托管又远又麻烦</h3><p data-i="why.3d">同类服务的机房大多在欧美，连过去慢，还要外币信用卡付款、用英文找客服。</p></div>
+      <div><h3 data-i="why.4t">想要一台不关机的机器</h3><p data-i="why.4d">自动构建、长时间任务需要 24 小时在线，自己的电脑没法一直开着。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="where">
+  <div class="wrap">
+    <h2 data-i="where.h" style="margin-bottom:.4em">机房在东南亚，<br>离你更近。</h2>
+    <p class="lede" data-i="where.p">比起欧美机房，东南亚到国内的距离短得多。</p>
+    <div class="routes" aria-hidden="true">
+      <div class="route near">
+        <div class="ends"><span data-i="where.you">你</span><span data-i="where.sea">东南亚机房</span></div>
+        <div class="line"><span class="dot"></span></div>
+      </div>
+      <div class="route">
+        <div class="ends"><span data-i="where.you">你</span><span data-i="where.west">欧美机房</span></div>
+        <div class="line"><span class="dot"></span></div>
+      </div>
+    </div>
+    <p class="note" data-i="where.note">距离示意，不是实测数据。实测延迟：待补。</p>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2 data-i="cmp.h">三种办法，<br>摆在一起看。</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th></th><th class="us bn">ANTMINI</th><th data-i="cmp.c2">欧美 Mac 托管</th><th data-i="cmp.c1">自己买一台</th></tr>
+        </thead>
+        <tbody>
+          <tr><th data-i="cmp.r1">前期投入</th><td class="us" data-i="cmp.none">不需要</td><td data-i="cmp.none">不需要</td><td data-i="cmp.r1a">几千元起</td></tr>
+          <tr><th data-i="cmp.r2">机器在哪</th><td class="us" data-i="cmp.r2c">东南亚</td><td data-i="cmp.r2b">欧美</td><td data-i="cmp.r2a">你手边</td></tr>
+          <tr><th data-i="cmp.r3">怎么付款</th><td class="us" data-i="cmp.r3c">微信、支付宝</td><td data-i="cmp.r3b">外币信用卡</td><td>—</td></tr>
+          <tr><th data-i="cmp.r4">客服语言</th><td class="us" data-i="cmp.r4c">中文</td><td data-i="cmp.r4b">英文</td><td>—</td></tr>
+          <tr><th data-i="cmp.r5">整机独享</th><td class="us yes">✓</td><td data-i="cmp.r5b">看套餐</td><td class="yes">✓</td></tr>
+          <tr><th data-i="cmp.r6">24 小时在线</th><td class="us yes">✓</td><td class="yes">✓</td><td data-i="cmp.r6a">要自己一直开着</td></tr>
+          <tr><th data-i="cmp.r7">不用了以后</th><td class="us" data-i="cmp.r7c">退租就行</td><td data-i="cmp.r7b">退订</td><td data-i="cmp.r7a">自己卖二手</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="spec">
+  <div class="wrap">
+    <h2 data-i="spec.h">一台机器，<br>完整交给你。</h2>
+    <div class="spec">
+      <div class="rig" aria-hidden="true"><div class="tilt"><div class="slab" id="slab"><u></u><u></u></div></div></div>
+      <dl>
+        <div><dt data-i="spec.k1">机型</dt><dd data-i="spec.v1">Mac mini<span class="tbd">（具体型号待补）</span></dd></div>
+        <div><dt data-i="spec.k2">芯片</dt><dd class="tbd" data-i="tbd">待补</dd></div>
+        <div><dt data-i="spec.k3">内存</dt><dd class="tbd" data-i="tbd">待补</dd></div>
+        <div><dt data-i="spec.k4">硬盘</dt><dd class="tbd" data-i="tbd">待补</dd></div>
+        <div><dt data-i="spec.k5">带宽</dt><dd class="tbd" data-i="tbd">待补</dd></div>
+        <div><dt data-i="spec.k6">系统</dt><dd>macOS</dd></div>
+        <div><dt data-i="spec.k7">权限</dt><dd data-i="spec.v7">管理员账户，软件随便装</dd></div>
+        <div><dt data-i="spec.k8">连接</dt><dd data-i="spec.v8">远程桌面</dd></div>
+        <div><dt data-i="spec.k9">独享</dt><dd data-i="spec.v9">一台机器只租给一位客户</dd></div>
+        <div><dt data-i="spec.k10">在线</dt><dd data-i="spec.v10">24 小时不关机，掉线有监控</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="use">
+  <div class="wrap">
+    <h2 data-i="use.h">这些事，<br>交给它正合适。</h2>
+    <div class="cells">
+      <div><h3 data-i="use.1t">iOS 和 macOS 开发</h3><p data-i="use.1d">用 Xcode 编译、打包、上架，不用为了开发专门买一台 Mac。</p></div>
+      <div><h3 data-i="use.2t">自动构建</h3><p data-i="use.2d">当成一台 24 小时在线的构建机，代码一提交就自动打包。</p></div>
+      <div><h3 data-i="use.3t">AI 编程工具</h3><p data-i="use.3d">适合运行 Claude Code 等开发工具。账号由你自带，我们不提供、不代售任何第三方账号。</p></div>
+      <div><h3 data-i="use.4t">长时间任务</h3><p data-i="use.4d">跑脚本、跑测试、挂着编译，不占用你自己的电脑。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="price">
+  <div class="wrap">
+    <h2 data-i="price.h">一个价格，<br>一整台机器。</h2>
+    <div class="plan">
+      <div>
+        <h3 data-i="price.name">整机月租</h3>
+        <p class="big"><sup>$</sup>149.9</p>
+        <p class="per" data-i="price.per">每台每月，美元计价</p>
+        <a class="pill l g" href="#contact" data-i="hero.cta1">立即租用</a>
+      </div>
+      <div>
+        <ul>
+          <li data-i="price.1">一整台 Mac mini，不和别人共用</li>
+          <li data-i="price.2">管理员权限，软件随便装</li>
+          <li data-i="price.3">24 小时在线，随时远程连接</li>
+          <li data-i="price.4">中文客服</li>
+          <li data-i="price.5">微信、支付宝付款</li>
+          <li data-i="price.6">退租后清除你的数据并重置机器</li>
+        </ul>
+        <p class="note" data-i="price.note">最短租期和长租优惠：待补。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="wrap">
+    <h2 data-i="flow.h">四步，<br>用上你的 Mac。</h2>
+    <ol class="steps">
+      <li><h3 data-i="flow.1t">联系我们</h3><p data-i="flow.1d">加微信，说说你要用来做什么。</p></li>
+      <li><h3 data-i="flow.2t">付款</h3><p data-i="flow.2d">微信或支付宝，按月付。</p></li>
+      <li><h3 data-i="flow.3t">拿到连接信息</h3><p data-i="flow.3d">我们把远程桌面的地址和密码发给你。</p></li>
+      <li><h3 data-i="flow.4t">开始使用</h3><p data-i="flow.4d">连上就是你的桌面。第一次登录后请改密码。</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2 data-i="faq.h">常见问题</h2>
+    <div class="faq">
+      <div class="qa open"><button type="button" aria-expanded="true" data-i="faq.1q">是真机还是虚拟机？</button><div class="ans"><div><p data-i="faq.1a">真机。一整台 Mac mini 只租给你一个人，不切分，不共用。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.2q">我能装自己的软件吗？</button><div class="ans"><div><p data-i="faq.2a">能。你拿到的是管理员账户，开发工具和软件都可以自己装。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.3q">可以登录自己的 Apple ID 吗？</button><div class="ans"><div><p data-i="faq.3a">可以。退租前请退出 Apple ID，并关闭「查找」，否则机器没法重置。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.4q">我的数据安全吗？</button><div class="ans"><div><p data-i="faq.4a">租期内这台机器只有你在用。我们保留一条管理通道，只用来处理故障和退租重置。退租后你的数据会被清除。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.5q">机房在哪里？网络怎么样？</button><div class="ans"><div><p data-i="faq.5a">机房在东南亚。带宽和延迟数据：待补。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.6q">可以运行 Claude Code 这类工具吗？</button><div class="ans"><div><p data-i="faq.6a">可以，机器上能自己安装各种开发工具。账号需要你自带，并自行遵守对应服务的使用条款。我们不提供、不代售任何第三方账号。</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false" data-i="faq.7q">有哪些事不能做？</button><div class="ans"><div><p data-i="faq.7a">任何违法用途都不行，具体以租用协议为准。发现违规会停止服务。</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <h2 data-i="ct.h">现在就要一台？</h2>
+    <p class="lede" data-i="ct.p">加微信，告诉我们你要用来做什么。</p>
+    <div class="wx">
+      <span data-i="ct.wx">微信</span>
+      <strong id="wxid">123456789</strong>
+      <button type="button" class="pill s w" id="copy" data-i="ct.copy">复制微信号</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i="ft.1">Mac mini、macOS、Xcode 是 Apple Inc. 的商标，文中提到的其他产品名称归各自所有者所有。本站与这些公司没有关联。</p>
+    <p>© 2026 <span class="bn">ANTMINI</span></p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+/* 品牌名没定：改这一行，全站生效（<title> 里的两处要手动改） */
+const BRAND = 'ANTMINI';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+$$('.bn').forEach(e => e.textContent = BRAND);
+
+/* ───────── 双语：中文写在页面里，英文在这里 ───────── */
+const EN = {
+  'nav.spec':'Specs','nav.compare':'Compare','nav.price':'Pricing','nav.flow':'How it works','nav.faq':'FAQ','nav.cta':'Get one',
+  'hero.h':'A whole Mac mini.<br>Yours alone.',
+  'hero.sub':'A real, dedicated machine. Not a VM, never shared. It sits in Southeast Asia and you work on it over remote desktop.',
+  'per':' / month','hero.cta1':'Rent one now','hero.cta2':'See the specs',
+  'hero.f1':'Pay with WeChat or Alipay','hero.f2':'Support in Chinese','hero.f3':'One machine, one tenant',
+  'hero.cap':'Illustration',
+  'hero.fig':'One ant in the frame, one tenant on the machine. Click any empty spot to drop it some sugar.',
+  'why.h':'You need a Mac.<br>You don’t have to buy one.',
+  'why.1t':'Apple apps need a Mac','why.1d':'Building, signing and shipping iPhone and Mac apps only happens on macOS.',
+  'why.2t':'Bought for a few months','why.2d':'The project wraps up, and an expensive machine starts collecting dust.',
+  'why.3t':'Overseas hosting is far and fiddly','why.3d':'Most Mac hosting sits in the US or Europe: a slow link from China, a foreign credit card, support in English only.',
+  'why.4t':'A machine that never sleeps','why.4d':'Build servers and long jobs need to stay on around the clock. Your laptop can’t.',
+  'where.h':'Hosted in Southeast Asia.<br>Closer to you.','where.p':'Compared with a US or European data center, it is a much shorter trip to mainland China.',
+  'where.sea':'Southeast Asia','where.you':'You','where.west':'US / Europe',
+  'where.note':'Schematic distance, not measured data. Measured latency: TBD.',
+  'cmp.h':'Three ways to get a Mac,<br>side by side.',
+  'cmp.c1':'Buy your own','cmp.c2':'US / EU Mac hosting','cmp.none':'None',
+  'cmp.r1':'Upfront cost','cmp.r1a':'Several thousand yuan and up',
+  'cmp.r2':'Where it lives','cmp.r2a':'On your desk','cmp.r2b':'US / Europe','cmp.r2c':'Southeast Asia',
+  'cmp.r3':'How you pay','cmp.r3b':'Foreign credit card','cmp.r3c':'WeChat Pay, Alipay',
+  'cmp.r4':'Support language','cmp.r4b':'English','cmp.r4c':'Chinese',
+  'cmp.r5':'Whole machine to yourself','cmp.r5b':'Depends on the plan',
+  'cmp.r6':'On 24/7','cmp.r6a':'Only if you leave it on',
+  'cmp.r7':'When you’re done','cmp.r7a':'Sell it second-hand','cmp.r7b':'Cancel','cmp.r7c':'Just end the lease',
+  'spec.h':'One machine,<br>handed over whole.',
+  'spec.k1':'Model','spec.v1':'Mac mini<span class="tbd"> (exact model TBD)</span>','tbd':'TBD',
+  'spec.k2':'Chip','spec.k3':'Memory','spec.k4':'Storage','spec.k5':'Bandwidth','spec.k6':'System',
+  'spec.k7':'Access','spec.v7':'Admin account. Install whatever you need',
+  'spec.k8':'Connection','spec.v8':'Remote desktop',
+  'spec.k9':'Tenancy','spec.v9':'One machine, one customer',
+  'spec.k10':'Uptime','spec.v10':'On 24/7, with downtime monitoring',
+  'use.h':'Work it’s<br>well suited to.',
+  'use.1t':'iOS and macOS development','use.1d':'Build, archive and ship with Xcode, without buying a Mac just for development.',
+  'use.2t':'Automated builds','use.2d':'Treat it as an always-on build machine that packages every commit.',
+  'use.3t':'AI coding tools','use.3d':'A good home for Claude Code and similar developer tools. You bring your own account. We never provide or resell third-party accounts.',
+  'use.4t':'Long-running jobs','use.4d':'Scripts, test suites, long compiles. None of it ties up your own computer.',
+  'price.h':'One price,<br>one whole machine.','price.name':'Dedicated, monthly','price.per':'Per machine, per month, in US dollars',
+  'price.1':'A whole Mac mini, shared with no one','price.2':'Admin access. Install whatever you need','price.3':'On 24/7, reachable any time',
+  'price.4':'Support in Chinese','price.5':'Pay with WeChat or Alipay','price.6':'Your data is wiped and the machine reset when you leave',
+  'price.note':'Minimum term and long-term discounts: TBD.',
+  'flow.h':'Four steps<br>to your Mac.',
+  'flow.1t':'Get in touch','flow.1d':'Add us on WeChat and tell us what you’ll use it for.',
+  'flow.2t':'Pay','flow.2d':'WeChat Pay or Alipay, month by month.',
+  'flow.3t':'Receive your login','flow.3d':'We send you the remote desktop address and password.',
+  'flow.4t':'Start working','flow.4d':'Connect and it’s your desktop. Change the password after your first login.',
+  'faq.h':'Questions',
+  'faq.1q':'Is it a real machine or a VM?','faq.1a':'A real one. A whole Mac mini is leased to you alone. It is never split or shared.',
+  'faq.2q':'Can I install my own software?','faq.2a':'Yes. You get an admin account, so you can install developer tools and apps yourself.',
+  'faq.3q':'Can I sign in with my own Apple ID?','faq.3a':'Yes. Before the lease ends, sign out of your Apple ID and turn off Find My. Otherwise the machine can’t be reset.',
+  'faq.4q':'Is my data safe?','faq.4a':'During the lease you are the only one using the machine. We keep one management channel, used only for fixing faults and for the reset when you leave. After that your data is wiped.',
+  'faq.5q':'Where is it hosted? How is the network?','faq.5a':'In Southeast Asia. Bandwidth and latency figures: TBD.',
+  'faq.6q':'Can I run tools like Claude Code?','faq.6a':'Yes. You can install any developer tools on the machine. You bring your own account and follow that service’s terms. We never provide or resell third-party accounts.',
+  'faq.7q':'What is not allowed?','faq.7a':'Anything illegal. The lease agreement has the details. Service stops if we find a violation.',
+  'ct.h':'Want one now?','ct.p':'Add us on WeChat and tell us what you’re building.','ct.wx':'WeChat','ct.copy':'Copy WeChat ID',
+  'ft.1':'Mac mini, macOS and Xcode are trademarks of Apple Inc. Other product names belong to their owners. This site is not affiliated with any of them.'
+};
+const META = {
+  zh:{title:document.title.replace('ANTMINI',BRAND),lang:'zh-CN'},
+  en:{title:BRAND+' | A whole Mac mini, yours alone',lang:'en'}
+};
+const nodes = $$('[data-i]');
+const ZH = {};
+nodes.forEach(n => { if(!(n.dataset.i in ZH)) ZH[n.dataset.i] = n.innerHTML; });
+let lang = 'zh';
+const L = (zh,en) => lang==='zh' ? zh : en;
+const store = {get(){try{return localStorage.getItem('lang')}catch(e){return null}},set(v){try{localStorage.setItem('lang',v)}catch(e){}}};
+
+function splitH1(){
+  const h=$('#h1');
+  h.innerHTML=h.innerHTML.split(/<br\s*\/?>/i).map(s=>`<span class="ln"><span>${s}</span></span>`).join('');
+}
+function setLang(l, first){
+  lang = l;
+  const dict = l==='en' ? EN : ZH;
+  nodes.forEach(n => { const v=dict[n.dataset.i]; if(v!=null) n.innerHTML=v; });
+  document.documentElement.lang = META[l].lang;
+  document.title = META[l].title;
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang===l)));
+  splitH1();
+  copyBtn.dataset.idle = copyBtn.textContent;
+  if(window.__hud) window.__hud();
+  if(!first){ store.set(l); playTerm(true); }
+}
+const copyBtn = $('#copy');
+$$('.lang button').forEach(b => b.addEventListener('click', () => { if(b.dataset.lang!==lang) setLang(b.dataset.lang); }));
+
+/* ───────── 终端：页面打开时打一遍字 ───────── */
+const tb = $('#tb');
+let termRun = 0;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function playTerm(instant){
+  const run = ++termRun, fast = instant || RM;
+  const cur = '<span class="cur"></span>';
+  tb.innerHTML = '';
+  const add = cls => { const d=document.createElement('div'); d.className=cls; tb.appendChild(d); return d; };
+  const type = async (text) => {
+    const d = add('c');
+    if(fast){ d.textContent=text; return true; }
+    for(let i=1;i<=text.length;i++){
+      if(run!==termRun) return false;
+      d.innerHTML = esc(text.slice(0,i)) + cur;
+      await sleep(26 + Math.random()*46);
+    }
+    await sleep(260); d.textContent = text; return run===termRun;
+  };
+  const out = async (text, cls='o', wait=340) => { add(cls).textContent=text; if(!fast) await sleep(wait); return run===termRun; };
+  if(!fast) await sleep(700);
+  if(!await type('uname -sm')) return;
+  if(!await out('Darwin arm64')) return;
+  if(!await type('xcodebuild -scheme App archive')) return;
+  const bar = add('o');
+  for(let p = fast?100:0; p<=100; p+=4){
+    if(run!==termRun) return;
+    const n=Math.round(p/100*22);
+    bar.textContent = '['+'█'.repeat(n)+'░'.repeat(22-n)+'] '+String(p).padStart(3)+'%';
+    if(!fast) await sleep(52);
+  }
+  if(!await out('** ARCHIVE SUCCEEDED **','ok',520)) return;
+  if(!await type('who')) return;
+  if(!await out('you      console')) return;
+  if(!await out(L('# 这台机器上只有你一个人','# nobody else on this machine'),'n',200)) return;
+  add('c').innerHTML = cur;
+}
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* 终端跟着鼠标微微倾斜 */
+const rig = $('#rig'), termEl = $('#term');
+if(!RM && matchMedia('(hover:hover)').matches){
+  rig.addEventListener('pointermove', e => {
+    const r = rig.getBoundingClientRect();
+    const x = (e.clientX-r.left)/r.width-.5, y = (e.clientY-r.top)/r.height-.5;
+    termEl.style.transform = `rotateY(${x*9}deg) rotateX(${-y*9}deg)`;
+  });
+  rig.addEventListener('pointerleave', () => termEl.style.transform='');
+}
+
+/* ───────── 导航底线、顶部进度 ───────── */
+const nav = $('#nav'), prog = $('#prog');
+function onScroll(){
+  const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+  nav.classList.toggle('stuck', y>8);
+  prog.style.transform = `scaleX(${max>0 ? Math.min(1,y/max) : 0})`;
+}
+addEventListener('scroll', onScroll, {passive:true});
+
+/* ───────── 问答展开 ───────── */
+$$('.qa button').forEach(b => b.addEventListener('click', () => {
+  const open = b.parentElement.classList.toggle('open');
+  b.setAttribute('aria-expanded', String(open));
+}));
+
+/* ───────── 复制微信号 ───────── */
+copyBtn.addEventListener('click', async () => {
+  const id = $('#wxid').textContent.trim();
+  let ok = false;
+  try{ await navigator.clipboard.writeText(id); ok = true; }
+  catch(e){
+    const r=document.createRange(); r.selectNodeContents($('#wxid'));
+    const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+    try{ ok=document.execCommand('copy'); }catch(_){}
+  }
+  copyBtn.textContent = ok ? L('已复制微信号','WeChat ID copied') : L('请长按号码复制','Press and hold the ID to copy');
+  setTimeout(() => copyBtn.textContent = copyBtn.dataset.idle, 1800);
+});
+
+/* ───────── 配置区的线框小盒子 ───────── */
+(() => {
+  const slab = $('#slab'), N = 9;
+  for(let i=0;i<N;i++){ const l=document.createElement('i'); l.style.setProperty('--i',i); if(i===N-1) l.className='lid'; slab.appendChild(l); }
+})();
+
+/* ───────── 蚂蚁 ─────────
+   一只蚂蚁在框里走，走过的地方留下线。
+   贴到边会沿着边走一阵，所以四条边的线最密。
+   鼠标靠近它会躲开；点一下空白处会放下一粒糖，它会走过去吃掉。 */
+(() => {
+  const trail = $('#trail'), top = $('#antc'), frame = $('.frame'), hud = $('#hud');
+  const tc = trail.getContext('2d'), ac = top.getContext('2d');
+  const LIME = '179,254,50', STEP = 1.5, SPEED = 70, PX_M = 0.0254/96;
+  const TAU = Math.PI*2;
+  const a = {x:0,y:0,th:0,turn:0,wall:null,follow:0,pause:0,dist:0,gait:0};
+  const ptr = {x:-9999,y:-9999};
+  let sugar = null, W=0, H=0, lastW=0, lastH=0, B={l:0,t:0,r:0,b:0}, px=0, py=0;
+
+  const gauss = () => (Math.random()+Math.random()+Math.random()-1.5)*1.2;
+  const ad = (p,q) => { let d=p-q; while(d>Math.PI)d-=TAU; while(d<-Math.PI)d+=TAU; return d; };
+
+  function bounds(){ const r=frame.getBoundingClientRect(); B={l:r.left+5,t:r.top+5,r:r.right-5,b:r.bottom-5}; }
+
+  function step(live){
+    a.turn += -a.turn*.03 + gauss()*.02;
+    a.th += a.turn + gauss()*.09;
+    if(live){
+      const dx=a.x-ptr.x, dy=a.y-ptr.y;
+      if(dx*dx+dy*dy < 120*120){ a.th += ad(Math.atan2(dy,dx),a.th)*.2; a.wall=null; }
+      else if(sugar){ a.th += ad(Math.atan2(sugar.y-a.y,sugar.x-a.x),a.th)*.11; a.wall=null; }
+    }
+    if(a.wall){
+      const n = {l:Math.PI,r:0,t:-Math.PI/2,b:Math.PI/2}[a.wall];
+      const t1=n+Math.PI/2, t2=n-Math.PI/2;
+      const tg = Math.abs(ad(t1,a.th))<Math.abs(ad(t2,a.th)) ? t1 : t2;
+      a.th += ad(tg+ad(n,tg)*.1, a.th)*.3;
+      if(--a.follow<=0){ a.wall=null; a.th = n+Math.PI+(Math.random()-.5)*2.2; }
+    }
+    let nx=a.x+Math.cos(a.th)*STEP, ny=a.y+Math.sin(a.th)*STEP, hx=null, hy=null;
+    if(nx<B.l){nx=B.l;hx='l'} else if(nx>B.r){nx=B.r;hx='r'}
+    if(ny<B.t){ny=B.t;hy='t'} else if(ny>B.b){ny=B.b;hy='b'}
+    const mx=(B.l+B.r)/2, my=(B.t+B.b)/2;
+    if(hx&&hy){                                   // 走到角上：换一条边，背着角走
+      if(a.wall===hx){ a.wall=hy; a.th = nx<mx ? 0 : Math.PI; }
+      else{ a.wall=hx; a.th = ny<my ? Math.PI/2 : -Math.PI/2; }
+      if(a.follow<60) a.follow=60+Math.random()*500;
+    }else if(hx||hy){
+      const w=hx||hy;
+      if(a.wall!==w){
+        if(Math.random()<.78){                    // 多数时候贴着边走
+          a.wall=w; a.follow=140+Math.random()*900;
+          a.th = hx ? (Math.sin(a.th)>=0?Math.PI/2:-Math.PI/2) : (Math.cos(a.th)>=0?0:Math.PI);
+        }else{                                    // 偶尔掉头回到中间
+          a.th = {l:0,r:Math.PI,t:Math.PI/2,b:-Math.PI/2}[w]+(Math.random()-.5)*2;
+        }
+      }
+    }
+    a.dist += Math.hypot(nx-a.x,ny-a.y); a.x=nx; a.y=ny;
+  }
+
+  function seed(){
+    tc.clearRect(0,0,W,H);
+    a.x=B.l+(B.r-B.l)*(.25+Math.random()*.5); a.y=B.t+(B.b-B.t)*(.25+Math.random()*.5);
+    a.th=Math.random()*TAU; a.turn=0; a.wall=null; a.dist=0;
+    const n=Math.round(Math.min(64000, (B.r-B.l)*(B.b-B.t)/24));   // 开场前它已经走了一阵
+    tc.strokeStyle=`rgba(${LIME},.19)`; tc.lineWidth=1; tc.lineCap='round'; tc.lineJoin='round';
+    for(let i=0;i<n;){ tc.beginPath(); tc.moveTo(a.x,a.y); for(let k=0;k<360&&i<n;k++,i++){ step(false); tc.lineTo(a.x,a.y); } tc.stroke(); }
+    tc.lineCap='butt';
+  }
+
+  function resize(force){
+    const w=innerWidth, h=innerHeight;
+    if(!force && w===lastW && Math.abs(h-lastH)<170){ bounds(); return; }   // 手机地址栏伸缩不重画
+    lastW=w; lastH=h; W=w; H=h+170;
+    const dpr=Math.min(devicePixelRatio||1,2);
+    for(const c of [trail,top]){ c.width=W*dpr; c.height=H*dpr; c.style.width=W+'px'; c.style.height=H+'px'; }
+    tc.setTransform(dpr,0,0,dpr,0,0); ac.setTransform(dpr,0,0,dpr,0,0);
+    bounds(); sugar=null; seed(); px=a.x; py=a.y;
+  }
+
+  const ell = (x,y,rx,ry) => { ac.beginPath(); ac.ellipse(x,y,rx,ry,0,0,TAU); ac.fill(); };
+  function drawAnt(){
+    ac.clearRect(px-24,py-24,48,48); px=a.x; py=a.y;
+    if(sugar){ ac.fillStyle='#fff'; ac.fillRect(sugar.x-2.5,sugar.y-2.5,5,5); }
+    ac.save(); ac.translate(a.x,a.y); ac.rotate(a.th); ac.scale(1.35,1.35);
+    const g=Math.sin(a.gait)*.95;
+    ac.strokeStyle='rgba(222,255,150,.95)'; ac.lineWidth=.55; ac.beginPath();
+    [[-1.1,-g],[.3,g],[1.6,-g]].forEach(([lx,s]) => { ac.moveTo(lx,0); ac.lineTo(lx-.9+s,-3.5); ac.moveTo(lx,0); ac.lineTo(lx-.9-s,3.5); });
+    ac.moveTo(3.5,-.5); ac.lineTo(5.9,-2.1-g*.3); ac.moveTo(3.5,.5); ac.lineTo(5.9,2.1+g*.3);
+    ac.stroke();
+    ac.fillStyle='#dcff96';
+    ell(-4.1,0,2.7,1.75); ell(-.2,0,1.75,1.05); ell(3,0,1.4,1.2);
+    ac.restore();
+  }
+
+  let last=0, acc=0, fadeT=0, hudT=0;
+  function tick(t){
+    const dt=Math.min(.05,(t-last)/1000||0); last=t;
+    if(a.pause>0) a.pause-=dt;
+    else{
+      acc += dt*SPEED/STEP;
+      if(acc>=1){
+        tc.beginPath(); tc.moveTo(a.x,a.y);
+        while(acc>=1){
+          acc--; step(true); tc.lineTo(a.x,a.y);
+          if(sugar && Math.hypot(sugar.x-a.x,sugar.y-a.y)<4){ ac.clearRect(sugar.x-4,sugar.y-4,8,8); sugar=null; a.pause=1.3; acc=0; break; }
+          if(Math.random()<.0022){ a.pause=.3+Math.random()*1.3; acc=0; break; }
+        }
+        tc.strokeStyle=`rgba(${LIME},.62)`; tc.lineWidth=1.15; tc.stroke();
+      }
+      a.gait += dt*24;
+    }
+    if((fadeT+=dt)>1.5){        // 新线慢慢淡下去，旧线留一层底
+      fadeT=0; tc.globalCompositeOperation='destination-out'; tc.fillStyle='rgba(0,0,0,.012)'; tc.fillRect(0,0,W,H); tc.globalCompositeOperation='source-over';
+    }
+    drawAnt();
+    if((hudT+=dt)>.12){ hudT=0; showHud(); }
+    requestAnimationFrame(tick);
+  }
+  function showHud(){ hud.textContent = L('它已经走了 ','It has walked ') + (a.dist*PX_M).toFixed(3) + ' m'; }
+
+  addEventListener('pointermove', e => { if(e.pointerType==='mouse'){ ptr.x=e.clientX; ptr.y=e.clientY; } }, {passive:true});
+  document.addEventListener('pointerleave', () => { ptr.x=ptr.y=-9999; });
+  addEventListener('click', e => {
+    if(RM || e.target.closest('a,button,input,textarea,select,summary,.term,table,#wxid')) return;
+    if(getSelection && String(getSelection())) return;
+    if(e.clientX<B.l||e.clientX>B.r||e.clientY<B.t||e.clientY>B.b) return;
+    if(sugar) ac.clearRect(sugar.x-4,sugar.y-4,8,8);
+    sugar={x:e.clientX,y:e.clientY}; a.pause=0;
+    ptr.x=ptr.y=-9999;                         // 放了糖就别再吓它
+  });
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz=setTimeout(resize,160); });
+
+  resize(true); drawAnt(); showHud();
+  window.__ant = a; window.__hud = showHud;
+  if(!RM) requestAnimationFrame(tick);
+})();
+
+/* ───────── 启动 ───────── */
+const saved = store.get();
+const want = saved || ((navigator.language||'zh').toLowerCase().startsWith('zh') ? 'zh' : 'en');
+setLang('zh', true);
+if(want==='en') setLang('en', true);
+onScroll();
+playTerm(false);
+})();
+</script>
 </body>
 </html>
