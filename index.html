@@ -168,18 +168,43 @@ dd{font-weight:550}
 .cells h3{font-size:clamp(22px,2.5vw,34px);font-weight:700}
 .cells p{color:var(--grey);max-width:30em}
 
-/* ── 价格 ── */
-.plan{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--lime);background:#000}
-.plan>div{padding:clamp(28px,4.4vw,64px)}
-.plan>div+div{border-left:1px solid var(--rule)}
-.plan h3{font-size:20px;font-weight:650;letter-spacing:0;color:var(--grey)}
-.big{font-size:clamp(72px,11.5vw,168px);font-weight:800;letter-spacing:-.055em;line-height:.95;margin:.14em 0 .1em;font-variant-numeric:tabular-nums}
-.big sup{font-size:.36em;vertical-align:.95em;letter-spacing:0;margin-right:.06em;font-weight:700}
-.per{color:var(--grey);margin-bottom:36px}
-.plan ul{list-style:none;padding:0;display:grid;gap:14px}
-.plan li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:baseline}
-.plan li::before{content:"";width:9px;height:9px;background:var(--lime);transform:translateY(-1px)}
-.plan .note{margin-top:28px}
+/* ── 价格：四档卡片（颜色都在 .tiers / .tier.dark 的变量里，换配色只改这两行） ── */
+.tiers{--card:#fff;--ink:#0f172a;--sub:#64748b;--line:#e2e8f0;--tick:#16a34a;--cross:#f87171;--blue:#2563eb;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.tier{position:relative;display:flex;flex-direction:column;padding:26px 22px 22px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.tier.dark{--card:#0f172a;--ink:#fff;--sub:#94a3b8;--line:rgba(255,255,255,.16);--tick:#4ade80;--cross:#fca5a5}
+.tier :focus-visible{outline-color:var(--blue)}
+.tier h3{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:16px;font-size:13px;font-weight:600}
+.seg button{padding:4px 12px;border-radius:999px;color:var(--sub);line-height:1.5}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.seg.ghost{visibility:hidden}
+.badge{position:absolute;top:-11px;right:16px;padding:3px 11px;border-radius:999px;background:var(--blue);color:#fff;font-size:12.5px;font-weight:650;line-height:1.4}
+.tier .amt{margin-top:14px;font-size:clamp(34px,3vw,42px);font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.tier .amt small{font-size:15px;font-weight:500;letter-spacing:0;color:var(--sub);margin-left:.2em}
+.tier .cny{margin-top:10px;color:var(--sub);font-size:15px;font-variant-numeric:tabular-nums}
+.tier .disc{margin-top:2px;color:var(--sub);font-size:13px}
+.tier ul{list-style:none;flex:1;align-content:start;display:grid;gap:10px;margin:20px 0 24px;padding:20px 0 0;border-top:1px solid var(--line);font-size:15px;line-height:1.5}
+.tier li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px}
+.tier li::before{content:"✓";color:var(--tick);font-weight:700}
+.tier li.no{color:var(--sub)}
+.tier li.no::before{content:"×";color:var(--cross)}
+.tier .pill{width:100%;height:48px;font-size:15px;background:var(--ink);color:var(--card)}
+.tier .pill:hover{background:var(--lime);color:#000}
+.tier.dark .pill{background:var(--blue);color:#fff}
+.tier.dark .pill:hover{background:#3b82f6}
+#price .note{margin-top:22px}
+
+/* ── 预订弹窗 ── */
+dialog.bk{margin:auto;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:clamp(24px,4vw,34px);background:#000;color:var(--white);border:1px solid rgba(255,255,255,.4)}
+dialog.bk::backdrop{background:rgba(0,0,0,.75)}
+.bk h3{font-size:clamp(24px,3vw,30px);padding-right:64px}
+.bk-price{margin-top:8px;color:var(--grey);font-variant-numeric:tabular-nums}
+.bk .lede{margin-top:18px;font-size:16px}
+.bk .wx{display:flex;margin-top:20px;padding:12px 12px 12px 18px;gap:10px 16px}
+.bk .wx strong{font-size:26px}
+.qr{margin-top:16px;width:148px;aspect-ratio:1;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.4);color:var(--mute);font-size:13px}
+.bk-x{position:absolute;top:16px;right:16px}
 
 /* ── 流程：真的是先后顺序，所以编号 ── */
 .steps{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(18px,2.6vw,40px);position:relative;counter-reset:s}
@@ -213,11 +238,13 @@ footer{border-top:1px solid var(--rule);padding:36px 0 46px;color:var(--mute);fo
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px 40px}
 footer p{max-width:52em}
 
+@media (max-width:1100px){
+  .tiers{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:28px}
+  .seg.ghost{display:none}
+}
 @media (max-width:980px){
   .nav-links{display:none}
   .hero-grid,.spec{grid-template-columns:minmax(0,1fr)}
-  .plan{grid-template-columns:minmax(0,1fr)}
-  .plan>div+div{border-left:0;border-top:1px solid var(--rule)}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:44px}
   .steps::after{display:none}
 }
@@ -234,6 +261,7 @@ footer p{max-width:52em}
   .rows>div{grid-template-columns:minmax(0,1fr)}
   .cells{grid-template-columns:minmax(0,1fr)}
   .cells>div{min-height:0}
+  .tiers{grid-template-columns:minmax(0,1fr)}
   .route.near{width:46%}
   .steps{grid-template-columns:minmax(0,1fr)}
   dl div{grid-template-columns:5.5em 1fr}
@@ -397,25 +425,74 @@ footer p{max-width:52em}
 <section id="price">
   <div class="wrap">
     <h2 data-i="price.h">一个价格，<br>一整台机器。</h2>
-    <div class="plan">
-      <div>
-        <h3 data-i="price.name">整机月租</h3>
-        <p class="big"><sup>$</sup>139.9</p>
-        <p class="per" data-i="price.per">每台每月，美元计价。折合人民币约 980–1,000 元，可用人民币支付</p>
-        <a class="pill l g" href="#contact" data-i="hero.cta1">立即租用</a>
-      </div>
-      <div>
+    <div class="tiers">
+      <article class="tier" data-plan="Core" data-usd="149.9" data-cny="1,080">
+        <div class="seg ghost" aria-hidden="true"><button type="button" tabindex="-1">方案 A</button><button type="button" tabindex="-1">方案 B</button></div>
+        <h3><span class="bn">ANTMINI</span> Core</h3>
+        <p class="amt">$149.9<small data-i="per">／月</small></p>
+        <p class="cny"><span data-i="price.abt">约</span> ¥1,080<span data-i="per">／月</span></p>
+        <p class="disc" data-i="price.disc">季付 9 折、年付 8 折，到期不自动续费</p>
         <ul>
-          <li data-i="price.1">一整台全新 Mac mini M4，16GB 内存，不和别人共用</li>
-          <li data-i="price.2">管理员权限，软件随便装</li>
-          <li data-i="price.3">24 小时在线，全天监控，掉线 1 分钟内告警</li>
-          <li data-i="price.4">全中文售后</li>
-          <li data-i="price.5">微信、支付宝付款，人民币结算</li>
-          <li data-i="price.6">退租后清除你的数据并重置机器</li>
+          <li data-i="price.c1.1">[配置占位 1]</li>
+          <li data-i="price.c1.2">[配置占位 2]</li>
+          <li data-i="price.c1.3">[配置占位 3]</li>
+          <li data-i="price.c1.4">[配置占位 4]</li>
+          <li data-i="price.c1.5">[配置占位 5]</li>
+          <li class="no" data-i="price.c1.x">[服务边界与免责说明占位]</li>
         </ul>
-        <p class="note" data-i="price.note">最短租期和长租优惠：待补。</p>
-      </div>
+        <button type="button" class="pill" data-book><span><span data-i="price.book">预订</span> Core</span></button>
+      </article>
+      <article class="tier" data-plan="Lite" data-usd="175.9" data-cny="1,268">
+        <div class="seg ghost" aria-hidden="true"><button type="button" tabindex="-1">方案 A</button><button type="button" tabindex="-1">方案 B</button></div>
+        <h3><span class="bn">ANTMINI</span> Lite</h3>
+        <p class="amt">$175.9<small data-i="per">／月</small></p>
+        <p class="cny"><span data-i="price.abt">约</span> ¥1,268<span data-i="per">／月</span></p>
+        <p class="disc" data-i="price.disc">季付 9 折、年付 8 折，到期不自动续费</p>
+        <ul>
+          <li data-i="price.c2.1">[配置占位 1]</li>
+          <li data-i="price.c2.2">[配置占位 2]</li>
+          <li data-i="price.c2.3">[配置占位 3]</li>
+          <li data-i="price.c2.4">[配置占位 4]</li>
+          <li data-i="price.c2.5">[配置占位 5]</li>
+          <li class="no" data-i="price.c2.x">[服务边界与免责说明占位]</li>
+        </ul>
+        <button type="button" class="pill" data-book><span><span data-i="price.book">预订</span> Lite</span></button>
+      </article>
+      <article class="tier" data-plan="Studio" data-usd="288.9" data-cny="2,080">
+        <div class="seg" role="group" aria-label="方案"><button type="button" data-opt="A" aria-pressed="true" data-i="price.optA">方案 A</button><button type="button" data-opt="B" aria-pressed="false" data-i="price.optB">方案 B</button></div>
+        <h3><span class="bn">ANTMINI</span> Studio</h3>
+        <p class="amt">$288.9<small data-i="per">／月</small></p>
+        <p class="cny"><span data-i="price.abt">约</span> ¥2,080<span data-i="per">／月</span></p>
+        <p class="disc" data-i="price.disc">季付 9 折、年付 8 折，到期不自动续费</p>
+        <ul>
+          <li><span data-opt="A" data-i="price.c3.a">[方案 A 核心配置占位]</span><span data-opt="B" data-i="price.c3.b" hidden>[方案 B 核心配置占位]</span></li>
+          <li data-i="price.c3.2">[配置占位 2]</li>
+          <li data-i="price.c3.3">[配置占位 3]</li>
+          <li data-i="price.c3.4">[配置占位 4]</li>
+          <li data-i="price.c3.5">[配置占位 5]</li>
+          <li class="no" data-i="price.c3.x">[服务边界与免责说明占位]</li>
+        </ul>
+        <button type="button" class="pill" data-book><span><span data-i="price.book">预订</span> Studio</span></button>
+      </article>
+      <article class="tier dark" data-plan="Ultra" data-usd="414.9" data-cny="2,980">
+        <span class="badge" data-i="price.rec">推荐</span>
+        <div class="seg" role="group" aria-label="方案"><button type="button" data-opt="A" aria-pressed="true" data-i="price.optA">方案 A</button><button type="button" data-opt="B" aria-pressed="false" data-i="price.optB">方案 B</button></div>
+        <h3><span class="bn">ANTMINI</span> Ultra</h3>
+        <p class="amt">$414.9<small data-i="per">／月</small></p>
+        <p class="cny"><span data-i="price.abt">约</span> ¥2,980<span data-i="per">／月</span></p>
+        <p class="disc" data-i="price.disc">季付 9 折、年付 8 折，到期不自动续费</p>
+        <ul>
+          <li><span data-opt="A" data-i="price.c4.a">[方案 A 核心配置占位]</span><span data-opt="B" data-i="price.c4.b" hidden>[方案 B 核心配置占位]</span></li>
+          <li data-i="price.c4.2">[配置占位 2]</li>
+          <li data-i="price.c4.3">[配置占位 3]</li>
+          <li data-i="price.c4.4">[配置占位 4]</li>
+          <li data-i="price.c4.5">[配置占位 5]</li>
+          <li class="no" data-i="price.c4.x">[服务边界与免责说明占位]</li>
+        </ul>
+        <button type="button" class="pill" data-book><span><span data-i="price.book">预订</span> Ultra</span></button>
+      </article>
     </div>
+    <p class="note" data-i="price.note">最短租期：待补。</p>
   </div>
 </section>
 
@@ -468,6 +545,19 @@ footer p{max-width:52em}
   </div>
 </footer>
 
+<dialog class="bk" id="book" aria-labelledby="bkTitle">
+  <button type="button" class="pill s o bk-x" id="bkClose" data-i="bk.close">关闭</button>
+  <h3 id="bkTitle"><span data-i="price.book">预订</span> <span id="bkPlan"></span></h3>
+  <p class="bk-price" id="bkPrice"></p>
+  <p class="lede" data-i="bk.p">加微信，把套餐名发给我们，确认后安排机器。</p>
+  <div class="wx">
+    <span data-i="ct.wx">微信</span>
+    <strong id="bkWx"></strong>
+    <button type="button" class="pill s w" id="bkCopy" data-i="ct.copy">复制微信号</button>
+  </div>
+  <div class="qr" data-i="bk.qr">二维码占位</div>
+</dialog>
+
 <script>
 (() => {
 'use strict';
@@ -516,10 +606,14 @@ const EN = {
   'use.2t':'Automated builds and tests','use.2d':'Treat it as an always-on build machine for CI/CD and automated tests that packages every commit.',
   'use.3t':'AI coding tools','use.3d':'A good home for Claude Code and similar developer tools. You bring your own account. We never provide or resell third-party accounts.',
   'use.4t':'Cross-border integration and long jobs','use.4d':'Integration work against overseas services, scripts, long compiles. None of it ties up your own computer.',
-  'price.h':'One price,<br>one whole machine.','price.name':'Dedicated, monthly','price.per':'Per machine, per month, priced in US dollars. About 980–1,000 yuan, and you can pay in yuan',
-  'price.1':'A whole, brand-new Mac mini M4 with 16GB of memory, shared with no one','price.2':'Admin access. Install whatever you need','price.3':'On 24/7, monitored around the clock, with an alert within a minute of going offline',
-  'price.4':'After-sales support in Chinese','price.5':'Pay with WeChat or Alipay, in yuan','price.6':'Your data is wiped and the machine reset when you leave',
-  'price.note':'Minimum term and long-term discounts: TBD.',
+  'price.h':'One price,<br>one whole machine.',
+  'price.rec':'Recommended','price.optA':'Option A','price.optB':'Option B','price.abt':'About',
+  'price.disc':'10% off paid quarterly, 20% off paid yearly. Never renews automatically.','price.book':'Book',
+  'price.c1.1':'[Spec placeholder 1]','price.c1.2':'[Spec placeholder 2]','price.c1.3':'[Spec placeholder 3]','price.c1.4':'[Spec placeholder 4]','price.c1.5':'[Spec placeholder 5]','price.c1.x':'[Service limits and disclaimer placeholder]',
+  'price.c2.1':'[Spec placeholder 1]','price.c2.2':'[Spec placeholder 2]','price.c2.3':'[Spec placeholder 3]','price.c2.4':'[Spec placeholder 4]','price.c2.5':'[Spec placeholder 5]','price.c2.x':'[Service limits and disclaimer placeholder]',
+  'price.c3.a':'[Option A core spec placeholder]','price.c3.b':'[Option B core spec placeholder]','price.c3.2':'[Spec placeholder 2]','price.c3.3':'[Spec placeholder 3]','price.c3.4':'[Spec placeholder 4]','price.c3.5':'[Spec placeholder 5]','price.c3.x':'[Service limits and disclaimer placeholder]',
+  'price.c4.a':'[Option A core spec placeholder]','price.c4.b':'[Option B core spec placeholder]','price.c4.2':'[Spec placeholder 2]','price.c4.3':'[Spec placeholder 3]','price.c4.4':'[Spec placeholder 4]','price.c4.5':'[Spec placeholder 5]','price.c4.x':'[Service limits and disclaimer placeholder]',
+  'price.note':'Minimum term: TBD.',
   'flow.h':'Four steps<br>to your Mac.',
   'flow.1t':'Get in touch','flow.1d':'Add us on WeChat and tell us what you’ll use it for. Leases are under your real name.',
   'flow.2t':'Pay','flow.2d':'WeChat Pay or Alipay, in yuan, month by month.',
@@ -535,6 +629,7 @@ const EN = {
   'faq.7q':'What is not allowed?','faq.7a':'Anything illegal. The lease agreement has the details. We only lease to developers and companies under their real names, and we watch each machine’s network traffic for anomalies. If we find a violation, the machine is taken offline at once and service stops.',
   'faq.8q':'Can I get one right away?','faq.8a':'The first batch is small. Once it is fully leased we keep a queue in the order people contacted us, and tell you when a machine frees up.',
   'ct.h':'Want one now?','ct.p':'Add us on WeChat and tell us what you’re building.','ct.wx':'WeChat','ct.copy':'Copy WeChat ID',
+  'bk.close':'Close','bk.p':'Add us on WeChat and send us the plan name. We’ll confirm and set up your machine.','bk.qr':'QR code placeholder',
   'ft.1':'Mac mini, macOS and Xcode are trademarks of Apple Inc. Other product names belong to their owners. This site is not affiliated with any of them.'
 };
 const META = {
@@ -644,6 +739,47 @@ copyBtn.addEventListener('click', async () => {
   }
   copyBtn.textContent = ok ? L('已复制微信号','WeChat ID copied') : L('请长按号码复制','Press and hold the ID to copy');
   setTimeout(() => copyBtn.textContent = copyBtn.dataset.idle, 1800);
+});
+
+/* ───────── 价格：方案 A/B 切换（只换第一条配置） ───────── */
+$$('.seg:not(.ghost)').forEach(seg => {
+  const card = seg.closest('.tier'), btns = $$('button', seg);
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.setAttribute('aria-pressed', String(x===b)));
+    $$('li [data-opt]', card).forEach(s => s.hidden = s.dataset.opt!==b.dataset.opt);
+  }));
+});
+
+/* ───────── 预订弹窗：带上点的是哪一档、哪个方案 ───────── */
+const bk = $('#book'), bkCopy = $('#bkCopy');
+$$('[data-book]').forEach(b => b.addEventListener('click', () => {
+  const card = b.closest('.tier'), d = card.dataset;
+  const on = $('.seg:not(.ghost) [aria-pressed="true"]', card);
+  const opt = on ? L(`（方案 ${on.dataset.opt}）`, ` (Option ${on.dataset.opt})`) : '';
+  $('#bkPlan').textContent = `${BRAND} ${d.plan}${opt}`;
+  $('#bkPrice').textContent = L(`$${d.usd}／月（约 ¥${d.cny}／月）`, `$${d.usd} / month (about ¥${d.cny} / month)`);
+  $('#bkWx').textContent = $('#wxid').textContent.trim();
+  if(bk.showModal) bk.showModal(); else bk.setAttribute('open','');
+}));
+const bkShut = () => bk.close ? bk.close() : bk.removeAttribute('open');
+$('#bkClose').addEventListener('click', bkShut);
+bk.addEventListener('click', e => {                      // 点弹窗外面的暗处也关
+  const r = bk.getBoundingClientRect();
+  if(e.clientX<r.left || e.clientX>r.right || e.clientY<r.top || e.clientY>r.bottom) bkShut();
+});
+bkCopy.addEventListener('click', async () => {
+  if(bkCopy.dataset.busy) return;
+  const idle = bkCopy.textContent, id = $('#bkWx').textContent;
+  let ok = false;
+  try{ await navigator.clipboard.writeText(id); ok = true; }
+  catch(e){
+    const r=document.createRange(); r.selectNodeContents($('#bkWx'));
+    const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+    try{ ok=document.execCommand('copy'); }catch(_){}
+  }
+  bkCopy.dataset.busy = 1;
+  bkCopy.textContent = ok ? L('已复制微信号','WeChat ID copied') : L('请长按号码复制','Press and hold the ID to copy');
+  setTimeout(() => { bkCopy.textContent = idle; delete bkCopy.dataset.busy; }, 1800);
 });
 
 /* ───────── 配置区的线框小盒子 ───────── */
